@@ -18,7 +18,7 @@ const generatePresignedUrl = async (key) => {
   }
 };
 
-export const uploadVideo = (req, res) => {
+export const uploadVideo = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No video file provided' });
   }
@@ -28,17 +28,9 @@ export const uploadVideo = (req, res) => {
   const filename = path.basename(key);
   const id = path.parse(filename).name;
 
-  const query = `INSERT INTO videos (id, original_name, saved_name, mime_type, size, upload_path) VALUES (?, ?, ?, ?, ?, ?)`;
-  
-  db.run(query, [id, originalname, filename, mimetype, size, key], function(err) {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Failed to save video metadata' });
-    }
-    
-    res.status(201).json({
-      message: 'Video uploaded successfully',
-      video: {
+  try {
+    const video = await db.video.create({
+      data: {
         id,
         original_name: originalname,
         saved_name: filename,
@@ -47,35 +39,48 @@ export const uploadVideo = (req, res) => {
         upload_path: key
       }
     });
-  });
+
+    res.status(201).json({
+      message: 'Video uploaded successfully',
+      video
+    });
+  } catch (err) {
+    console.error('Database error:', err);
+    return res.status(500).json({ error: 'Failed to save video metadata' });
+  }
 };
 
-export const getAllVideos = (req, res) => {
-  const query = `SELECT * FROM videos ORDER BY created_at DESC`;
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Failed to retrieve videos' });
-    }
-    res.json(rows);
-  });
+export const getAllVideos = async (req, res) => {
+  try {
+    const videos = await db.video.findMany({
+      orderBy: {
+        created_at: 'desc'
+      }
+    });
+    res.json(videos);
+  } catch (err) {
+    console.error('Database error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve videos' });
+  }
 };
 
-export const getVideoById = (req, res) => {
+export const getVideoById = async (req, res) => {
   const { id } = req.params;
-  const query = `SELECT * FROM videos WHERE id = ?`;
   
-  db.get(query, [id], async (err, row) => {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Failed to retrieve video metadata' });
-    }
-    if (!row) {
+  try {
+    const video = await db.video.findUnique({
+      where: { id }
+    });
+    
+    if (!video) {
       return res.status(404).json({ error: 'Video not found' });
     }
     
-    const presignedUrl = await generatePresignedUrl(row.upload_path);
-    row.upload_path = presignedUrl; // Return the presigned URL instead of the S3 key
-    res.json(row);
-  });
+    const presignedUrl = await generatePresignedUrl(video.upload_path);
+    video.upload_path = presignedUrl; // Return the presigned URL instead of the S3 key
+    res.json(video);
+  } catch (err) {
+    console.error('Database error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve video metadata' });
+  }
 };

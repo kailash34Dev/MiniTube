@@ -1,26 +1,20 @@
-import sqlite3 from 'sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import pg from 'pg';
+import dotenv from 'dotenv';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+dotenv.config();
 
-const dbPath = path.resolve(__dirname, '../../database.sqlite');
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err.message);
-  } else {
-    console.log('Connected to the SQLite database.');
-    db.run(`CREATE TABLE IF NOT EXISTS videos (
-      id TEXT PRIMARY KEY,
-      original_name TEXT,
-      saved_name TEXT,
-      mime_type TEXT,
-      size INTEGER,
-      upload_path TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-  }
-});
+const { Pool } = pg;
 
-export default db;
+const connectionString = process.env.CONNECTION_STRING;
+
+if (!connectionString) {
+  throw new Error('CONNECTION_STRING is not defined in the environment variables');
+}
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
+
+export default prisma;
