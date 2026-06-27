@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import internalRoutes from "./routes/internalRoutes.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 
 // Routes
 app.use("/api/videos", uploadRoutes);
+app.use("/api/internal", internalRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

@@ -35,3 +35,15 @@ export const updateVideoStatus = async (videoId, status) => {
         throw err;
     }
 };
+export const updateVideo = async (videoId, updateData) => {
+    try {
+        return await Video.findByIdAndUpdate(
+            videoId,
+            { $set: updateData },
+            { new: true },
+        );
+    } catch (err) {
+        console.error("Database error in updateVideo:", err);
+        throw err;
+    }
+};
