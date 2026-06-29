@@ -1,0 +1,35 @@
+services:
+  video-upload-service:
+    build:
+      context: .
+      dockerfile: services/video-upload-service/Dockerfile
+    container_name: minitube-video-upload
+    ports:
+      - "${UPLOAD_SERVICE_PORT:-5001}:${UPLOAD_SERVICE_PORT:-5001}"
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - video-streaming-service
+
+  video-processing-service:
+    build:
+      context: .
+      dockerfile: services/video-processing-service/Dockerfile
+    container_name: minitube-video-processing
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - video-upload-service
+
+  video-streaming-service:
+    build:
+      context: .
+      dockerfile: services/video-streaming-service/Dockerfile
+    container_name: minitube-video-streaming
+    ports:
+      - "${STREAMING_SERVICE_PORT:-5002}:${STREAMING_SERVICE_PORT:-5002}"
+    env_file:
+      - .env
+    restart: unless-stopped

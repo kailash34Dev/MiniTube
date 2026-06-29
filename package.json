@@ -4,8 +4,6 @@
   "private": true,
   "workspaces": [
     "shared",
-    "video-upload-service",
-    "video-processing-service",
-    "video-streaming-service"
+    "services/*"
   ]
 }
