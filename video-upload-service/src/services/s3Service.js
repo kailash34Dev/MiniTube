@@ -1,6 +1,6 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { s3 } from "../config/s3.js";
+import { s3 } from "@minitube/shared";
 
 export const generatePresignedUploadUrl = async (key, contentType) => {
     if (!key) return null;

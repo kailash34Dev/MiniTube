@@ -1,5 +1,5 @@
 import ffmpeg from "fluent-ffmpeg";
-import { AppError } from "./AppError.js";
+import { ApiError as AppError } from "@minitube/shared";
 
 export const getMetadata = (filePath) => {
     return new Promise((resolve, reject) => {

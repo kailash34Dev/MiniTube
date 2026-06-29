@@ -1,9 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import '@minitube/shared';
 import streamingRoutes from './routes/streamingRoutes.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5002;

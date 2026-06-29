@@ -1,4 +1,4 @@
-import { AppError } from "../utils/AppError.js";
+import { ApiError as AppError } from "@minitube/shared";
 
 const getUploadServiceUrl = () => {
     return (

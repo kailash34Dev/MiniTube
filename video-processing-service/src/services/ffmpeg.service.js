@@ -1,6 +1,6 @@
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
-import { AppError } from "../utils/AppError.js";
+import { ApiError as AppError } from "@minitube/shared";
 
 export const QUALITIES = [
     { resolution: 1080, bitrate: 5000, name: "1080p", resolutionStr: "1920x1080" },

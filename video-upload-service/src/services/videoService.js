@@ -1,4 +1,4 @@
-import Video from "../models/video.model.js";
+import { Video } from "@minitube/shared";
 
 export const createVideo = async (videoData) => {
     try {

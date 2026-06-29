@@ -1,5 +1,5 @@
 import { SendMessageCommand } from "@aws-sdk/client-sqs";
-import sqsClient, { QUEUE_URL } from "../config/sqs.js";
+import { sqs as sqsClient, QUEUE_URL } from "@minitube/shared";
 
 export const queueVideoForProcessing = async (videoId) => {
     try {

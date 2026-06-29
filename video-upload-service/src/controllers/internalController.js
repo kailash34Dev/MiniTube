@@ -1,6 +1,5 @@
 import { getVideoById, updateVideo } from "../services/videoService.js";
-import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError, asyncHandler } from "@minitube/shared";
 
 export const getInternalVideo = asyncHandler(async (req, res) => {
     const { id } = req.params;

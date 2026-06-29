@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import "./src/config/db.js";
+import "@minitube/shared";
 import app from "./src/app.js";
 
 const PORT = process.env.PORT || 5001;

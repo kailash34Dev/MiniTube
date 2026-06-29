@@ -7,8 +7,7 @@ import {
     updateVideoStatus,
 } from "../services/videoService.js";
 import { queueVideoForProcessing } from "../services/sqsService.js";
-import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError, asyncHandler } from "@minitube/shared";
 
 export const uploadInit = asyncHandler(async (req, res) => {
     const {

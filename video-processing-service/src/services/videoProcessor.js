@@ -4,7 +4,7 @@ import { downloadFile, uploadFile, getAllFiles } from "./s3.service.js";
 import { getMetadata } from "../utils/metadata.js";
 import { generateHlsStream, QUALITIES } from "./ffmpeg.service.js";
 import { updateVideoStatus } from "./api.service.js";
-import { AppError } from "../utils/AppError.js";
+import { ApiError as AppError } from "@minitube/shared";
 
 const TEMP_DIR = "/tmp";
 

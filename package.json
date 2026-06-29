@@ -1,0 +1,11 @@
+{
+  "name": "minitube",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "video-upload-service",
+    "video-processing-service",
+    "video-streaming-service"
+  ]
+}

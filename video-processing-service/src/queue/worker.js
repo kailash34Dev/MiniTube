@@ -2,7 +2,7 @@ import {
     ReceiveMessageCommand,
     DeleteMessageCommand,
 } from "@aws-sdk/client-sqs";
-import sqsClient, { QUEUE_URL } from "../config/sqs.js";
+import { sqs as sqsClient, QUEUE_URL } from "@minitube/shared";
 import { processVideo } from "../services/videoProcessor.js";
 import {
     fetchVideoDetails,

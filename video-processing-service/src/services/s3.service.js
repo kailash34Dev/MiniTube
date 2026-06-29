@@ -3,7 +3,7 @@ import path from "path";
 import mime from "mime-types";
 import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { pipeline } from "stream/promises";
-import s3Client, { BUCKET_NAME } from "../config/s3.js";
+import { s3 as s3Client, BUCKET_NAME } from "@minitube/shared";
 
 export const downloadFile = async (s3Key, localDestPath) => {
     const getCmd = new GetObjectCommand({ Bucket: BUCKET_NAME, Key: s3Key });
