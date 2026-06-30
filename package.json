@@ -1,7 +1,9 @@
 {
   "name": "minitube",
   "version": "1.0.0",
+  "description": "MiniTube is a video streaming platform built with Node.js, AWS services and FFmpeg. This repository contains the shared package and backend services managed using npm workspaces.",
   "private": true,
+  "license": "MIT",
   "workspaces": [
     "shared",
     "services/*"

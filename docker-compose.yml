@@ -9,8 +9,6 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    depends_on:
-      - video-streaming-service
 
   video-processing-service:
     build:
