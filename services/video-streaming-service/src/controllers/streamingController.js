@@ -111,6 +111,7 @@ export const getVideoById = async (req, res) => {
                 id: video._id,
                 title: video.title,
                 description: video.description,
+                channelId: video.creatorId,
                 channelName: video.creatorName,
                 channelAvatar: video.creatorProfilePicture,
                 views: video.views || 0,
@@ -217,5 +218,69 @@ export const getRecommendations = async (req, res) => {
     } catch (err) {
         console.error("Error fetching recommendations:", err);
         res.status(500).json({ error: "Failed to retrieve recommendations" });
+    }
+};
+
+export const searchVideos = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) {
+            return res.status(400).json({ error: "Search query is required" });
+        }
+
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 20;
+        const skip = (page - 1) * limit;
+
+        const query = {
+            $text: { $search: q },
+            status: "published",
+        };
+
+        const totalVideos = await Video.countDocuments(query);
+        const videos = await Video.find(query)
+            .select("title duration created_at thumbnail_path creatorName creatorProfilePicture views")
+            .sort({ score: { $meta: "textScore" } })
+            .skip(skip)
+            .limit(limit)
+            .lean();
+
+        // Generate presigned URLs for thumbnails
+        const videosWithUrls = await Promise.all(
+            videos.map(async (video) => {
+                const presignedThumbnailUrl = await generatePresignedUrl(
+                    video.thumbnail_path,
+                );
+
+                return {
+                    id: video._id,
+                    title: video.title,
+                    duration: video.duration,
+                    created_at: video.created_at,
+                    thumbnail_path:
+                        presignedThumbnailUrl || video.thumbnail_path,
+                    channelName: video.creatorName,
+                    channelAvatar: video.creatorProfilePicture,
+                    views: video.views || 0,
+                    likeCount: video.likeCount || 0,
+                    dislikeCount: video.dislikeCount || 0,
+                };
+            }),
+        );
+
+        const totalPages = Math.ceil(totalVideos / limit);
+
+        res.json({
+            videos: videosWithUrls,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalVideos,
+                hasMore: page < totalPages,
+            },
+        });
+    } catch (err) {
+        console.error("Search error:", err);
+        return res.status(500).json({ error: "Failed to search videos" });
     }
 };

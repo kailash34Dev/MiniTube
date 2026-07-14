@@ -120,6 +120,24 @@ const videoSchema = new mongoose.Schema(
     },
 );
 
+videoSchema.index(
+    {
+        title: "text",
+        description: "text",
+        category: "text",
+        tags: "text",
+    },
+    {
+        weights: {
+            title: 10,
+            tags: 5,
+            category: 3,
+            description: 1,
+        },
+        name: "video_text_search_index",
+    }
+);
+
 videoSchema.virtual("id").get(function () {
     return this._id;
 });

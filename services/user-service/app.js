@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import "./src/config/passport.js"; // Initialize passport config
 import authRoutes from "./src/routes/auth.routes.js";
+import subscriptionRoutes from "./src/routes/subscription.routes.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 app.use("/auth", authRoutes);
+app.use("/api/subscriptions", subscriptionRoutes);
 
 // Health check route
 app.get("/health", (req, res) => {

@@ -1,10 +1,20 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Menu, Search, Plus, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.svg';
 
 export default function Navbar({ toggleSidebar }) {
   const { user } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
     <nav className="navbar">
@@ -21,9 +31,15 @@ export default function Navbar({ toggleSidebar }) {
       </div>
 
       <div className="navbar-center">
-        <form className="search-form" onSubmit={(e) => e.preventDefault()}>
+        <form className="search-form" onSubmit={handleSearch}>
           <div className="search-input-wrapper">
-            <input type="text" placeholder="Search" className="search-input" />
+            <input 
+              type="text" 
+              placeholder="Search" 
+              className="search-input" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
           <button type="submit" className="search-btn">
             <Search size={20} />

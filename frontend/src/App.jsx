@@ -6,10 +6,12 @@ import Home from './pages/Home';
 import Video from './pages/Video';
 import Dashboard from './pages/Dashboard';
 import Upload from './pages/Upload';
+import SearchResults from './pages/SearchResults';
 
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/", element: <Home /> },
+  { path: "/search", element: <SearchResults /> },
   { path: "/video/:id", element: <Video /> },
   { path: "/dashboard", element: <ProtectedRoute><Dashboard /></ProtectedRoute> },
   { path: "/upload", element: <ProtectedRoute><Upload /></ProtectedRoute> },

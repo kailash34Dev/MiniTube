@@ -42,7 +42,7 @@ const formatViews = (views) => {
   return views + " views";
 };
 
-export default function VideoGrid() {
+export default function VideoGrid({ searchQuery }) {
   const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,8 +50,14 @@ export default function VideoGrid() {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
+        setIsLoading(true);
         const STREAMING_URL = import.meta.env.VITE_STREAMING_SERVICE_URL || 'http://localhost:5002';
-        const response = await fetch(`${STREAMING_URL}/api/videos`);
+        
+        const url = searchQuery 
+          ? `${STREAMING_URL}/api/videos/search?q=${encodeURIComponent(searchQuery)}`
+          : `${STREAMING_URL}/api/videos`;
+
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error('Failed to fetch videos');
         }
@@ -79,7 +85,7 @@ export default function VideoGrid() {
     };
 
     fetchVideos();
-  }, []);
+  }, [searchQuery]);
 
   if (isLoading) {
     return (

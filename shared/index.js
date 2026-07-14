@@ -6,4 +6,6 @@ export { asyncHandler } from "./src/utils/asyncHandler.js";
 export { default as Video } from "./src/models/video.model.js";
 export { default as User } from "./src/models/user.model.js";
 export { default as Interaction } from "./src/models/interaction.model.js";
+export { default as Subscription } from "./src/models/subscription.model.js";
+export { default as Comment } from "./src/models/comment.model.js";
 export { verifyToken } from "./src/middlewares/auth.middleware.js";

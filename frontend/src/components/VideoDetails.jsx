@@ -5,6 +5,9 @@ export default function VideoDetails({ video }) {
   const [likeCount, setLikeCount] = useState(video?.likeCount || 0);
   const [dislikeCount, setDislikeCount] = useState(video?.dislikeCount || 0);
   const [userAction, setUserAction] = useState(null);
+  const [subscriberCount, setSubscriberCount] = useState(0);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubsLoading, setIsSubsLoading] = useState(false);
 
   useEffect(() => {
     if (!video) return;
@@ -26,7 +29,29 @@ export default function VideoDetails({ video }) {
       }
     };
     
+    const fetchSubscriptionData = async () => {
+      if (!video.channelId) return;
+      try {
+        const profileRes = await fetch(`http://localhost:3003/api/subscriptions/${video.channelId}/profile`);
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          setSubscriberCount(profileData.channel.subscriberCount || 0);
+        }
+        
+        const subRes = await fetch(`http://localhost:3003/api/subscriptions/${video.channelId}/status`, {
+          credentials: 'include'
+        });
+        if (subRes.ok) {
+          const subData = await subRes.json();
+          setIsSubscribed(subData.isSubscribed);
+        }
+      } catch (error) {
+        console.error("Error fetching subscription data:", error);
+      }
+    };
+
     fetchStatus();
+    fetchSubscriptionData();
   }, [video]);
 
   const handleInteraction = async (type) => {
@@ -48,6 +73,28 @@ export default function VideoDetails({ video }) {
       }
     } catch (error) {
       console.error("Error toggling interaction:", error);
+    }
+  };
+
+  const handleSubscribe = async () => {
+    if (!video || !video.channelId || isSubsLoading) return;
+    setIsSubsLoading(true);
+    try {
+      const response = await fetch(`http://localhost:3003/api/subscriptions/${video.channelId}`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setIsSubscribed(data.action === "subscribed");
+        setSubscriberCount(data.subscriberCount);
+      } else if (response.status === 401) {
+        alert("Please log in to subscribe to channels.");
+      }
+    } catch (error) {
+      console.error("Error toggling subscription:", error);
+    } finally {
+      setIsSubsLoading(false);
     }
   };
 
@@ -77,9 +124,19 @@ export default function VideoDetails({ video }) {
           <img src={video.channelAvatar || 'https://via.placeholder.com/40'} alt={video.channelName} className="channel-avatar-large" />
           <div className="channel-text">
             <span className="channel-name">{video.channelName}</span>
-            <span className="channel-subs">1.2M subscribers</span>
+            <span className="channel-subs">{formatViews(subscriberCount)} subscribers</span>
           </div>
-          <button className="subscribe-btn">Subscribe</button>
+          <button 
+            className={`subscribe-btn ${isSubscribed ? 'subscribed' : ''}`}
+            onClick={handleSubscribe}
+            disabled={isSubsLoading}
+            style={{
+              backgroundColor: isSubscribed ? '#272727' : '#f1f1f1',
+              color: isSubscribed ? '#f1f1f1' : '#0f0f0f',
+            }}
+          >
+            {isSubscribed ? 'Subscribed' : 'Subscribe'}
+          </button>
         </div>
 
         <div className="video-action-buttons">

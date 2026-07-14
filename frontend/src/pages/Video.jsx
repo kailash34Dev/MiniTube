@@ -56,7 +56,7 @@ export default function Video() {
               <VideoDetails video={videoData} />
             </>
           )}
-          <Comments />
+          <Comments videoId={id} />
         </main>
         
         <aside className="video-sidebar">
