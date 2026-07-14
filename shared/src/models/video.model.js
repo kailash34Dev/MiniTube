@@ -19,6 +19,19 @@ const videoSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        creatorId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        creatorName: {
+            type: String,
+            required: true,
+        },
+        creatorProfilePicture: {
+            type: String,
+            required: true,
+        },
         thumbnail_path: {
             type: String,
             required: true,
@@ -69,6 +82,18 @@ const videoSchema = new mongoose.Schema(
         duration: {
             type: Number,
             default: null,
+        },
+        views: {
+            type: Number,
+            default: 0,
+        },
+        likeCount: {
+            type: Number,
+            default: 0,
+        },
+        dislikeCount: {
+            type: Number,
+            default: 0,
         },
         width: {
             type: Number,

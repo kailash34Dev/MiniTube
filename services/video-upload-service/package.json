@@ -14,6 +14,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1075.0",
     "@minitube/shared": "*",
     "cors": "^2.8.6",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^9.7.2",

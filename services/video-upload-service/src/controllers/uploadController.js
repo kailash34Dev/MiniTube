@@ -7,7 +7,7 @@ import {
     updateVideoStatus,
 } from "../services/videoService.js";
 import { queueVideoForProcessing } from "../services/sqsService.js";
-import { ApiError, asyncHandler } from "@minitube/shared";
+import { ApiError, asyncHandler, User } from "@minitube/shared";
 
 export const uploadInit = asyncHandler(async (req, res) => {
     const {
@@ -34,6 +34,11 @@ export const uploadInit = asyncHandler(async (req, res) => {
             400,
             "title, description, and category are required",
         );
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        throw new ApiError(404, "User not found");
     }
 
     const videoId = nanoid(10);
@@ -64,6 +69,9 @@ export const uploadInit = asyncHandler(async (req, res) => {
 
     await createVideo({
         id: videoId,
+        creatorId: req.user.id,
+        creatorName: user.displayName,
+        creatorProfilePicture: user.profilePicture || "",
         mime_type: mimeType,
         actual_size: size,
         title: title,

@@ -31,3 +31,25 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    container_name: minitube-user-service
+    ports:
+      - "${USER_SERVICE_PORT:-3003}:${USER_SERVICE_PORT:-3003}"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  interaction-service:
+    build:
+      context: .
+      dockerfile: services/interaction-service/Dockerfile
+    container_name: minitube-interaction-service
+    ports:
+      - "${INTERACTION_SERVICE_PORT:-5003}:${INTERACTION_SERVICE_PORT:-5003}"
+    env_file:
+      - .env
+    restart: unless-stopped
