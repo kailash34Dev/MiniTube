@@ -1,9 +1,20 @@
 import { ApiError as AppError } from "@minitube/shared";
 
 const getUploadServiceUrl = () => {
-    return (
-        process.env.UPLOAD_SERVICE_URL || "http://localhost:5001/api/internal"
-    );
+    return process.env.UPLOAD_SERVICE_URL;
+};
+
+export const checkUploadServiceHealth = async () => {
+    try {
+        // We just need to check if the upload server is accepting connections.
+        // This is required before starting video processing.
+        // It might return 404, but as long as it doesn't throw ECONNREFUSED, it's up.
+        const url = getUploadServiceUrl().replace("/api/internal", "");
+        await fetch(url, { method: "HEAD" });
+        return true;
+    } catch (error) {
+        return false;
+    }
 };
 
 export const fetchVideoDetails = async (videoId) => {
@@ -12,8 +23,8 @@ export const fetchVideoDetails = async (videoId) => {
 
     if (!response.ok) {
         throw new AppError(
-            `Failed to fetch video ${videoId}. Status: ${response.status}`,
             response.status,
+            `Failed to fetch video ${videoId}. Status: ${response.status}`,
         );
     }
 
@@ -33,8 +44,8 @@ export const updateVideoStatus = async (videoId, updateData) => {
 
     if (!response.ok) {
         throw new AppError(
-            `Failed to update video ${videoId} status. Status: ${response.status}`,
             response.status,
+            `Failed to update video ${videoId} status. Status: ${response.status}`,
         );
     }
 

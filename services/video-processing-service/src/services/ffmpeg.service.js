@@ -3,7 +3,12 @@ import fs from "fs";
 import { ApiError as AppError } from "@minitube/shared";
 
 export const QUALITIES = [
-    { resolution: 1080, bitrate: 5000, name: "1080p", resolutionStr: "1920x1080" },
+    {
+        resolution: 1080,
+        bitrate: 5000,
+        name: "1080p",
+        resolutionStr: "1920x1080",
+    },
     { resolution: 720, bitrate: 2800, name: "720p", resolutionStr: "1280x720" },
     { resolution: 540, bitrate: 1400, name: "540p", resolutionStr: "960x540" },
     { resolution: 360, bitrate: 800, name: "360p", resolutionStr: "640x360" },
@@ -28,7 +33,9 @@ export const generateHlsStream = (inputPath, outputDir, quality) => {
             ])
             .output(`${outputDir}/index.m3u8`)
             .on("end", () => resolve())
-            .on("error", (err) => reject(new AppError(`FFmpeg Error: ${err.message}`, 500)))
+            .on("error", (err) =>
+                reject(new AppError(500, `FFmpeg Error: ${err.message}`)),
+            )
             .run();
     });
 };

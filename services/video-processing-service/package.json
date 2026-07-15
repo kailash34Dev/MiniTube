@@ -1,7 +1,7 @@
 {
-  "name": "video-processing-service",
+  "name": "minitube-video-processing-service",
   "version": "1.0.0",
-  "description": "Processing service",
+  "description": "Minitube processing service is responsible for transcoding uploaded videos into multi-resolution HLS streams, and updating processing status.",
   "type": "module",
   "main": "index.js",
   "scripts": {

@@ -7,6 +7,7 @@ import { processVideo } from "../services/videoProcessor.js";
 import {
     fetchVideoDetails,
     updateVideoStatus,
+    checkUploadServiceHealth,
 } from "../services/api.service.js";
 
 export const startWorkerLoop = async () => {
@@ -17,6 +18,15 @@ export const startWorkerLoop = async () => {
 
     while (true) {
         try {
+            const isUploadServiceUp = await checkUploadServiceHealth();
+            if (!isUploadServiceUp) {
+                console.log(
+                    "[Worker] Upload service is down. Waiting before pulling new jobs...",
+                );
+                await new Promise((resolve) => setTimeout(resolve, 10000));
+                continue;
+            }
+
             const receiveCommand = new ReceiveMessageCommand({
                 QueueUrl: QUEUE_URL,
                 WaitTimeSeconds: 20,
@@ -104,9 +114,12 @@ export const startWorkerLoop = async () => {
                         jobError.stack || jobError,
                     );
 
-                    if (receiveCount >= 2) {
+                    const isClientError =
+                        jobError.statusCode >= 400 && jobError.statusCode < 500;
+
+                    if (receiveCount >= 2 || isClientError) {
                         console.log(
-                            `[Worker] Max retries (2) reached. Marking as failed.`,
+                            `[Worker] ${isClientError ? "Client error (non-retryable)" : "Max retries (2) reached"}. Marking as failed.`,
                         );
                         if (videoId) {
                             try {
@@ -135,7 +148,7 @@ export const startWorkerLoop = async () => {
                 pollError,
             );
             // Wait a bit before polling again to prevent rapid failing loops
-            await new Promise((resolve) => setTimeout(resolve, 5000));
+            await new Promise((resolve) => setTimeout(resolve, 10000));
         }
     }
 };

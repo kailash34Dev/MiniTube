@@ -122,7 +122,7 @@ export const processVideo = async (video) => {
         if (error instanceof AppError) {
             throw error;
         }
-        throw new AppError(`Processing failed: ${error.message}`, 500, false);
+        throw new AppError(500, `Processing failed: ${error.message}`);
     } finally {
         cleanupTempFiles(rawLocalPath, hlsLocalDir);
     }
